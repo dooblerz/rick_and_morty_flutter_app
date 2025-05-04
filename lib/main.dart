@@ -4,9 +4,11 @@ import 'package:provider/provider.dart';
 import 'package:rick_and_morty_app/models/character_mode.dart';
 import 'package:rick_and_morty_app/providers/api_provider.dart';
 import 'package:rick_and_morty_app/sreens/character_screen.dart';
+import 'package:rick_and_morty_app/sreens/favorite_screen.dart';
 import 'package:rick_and_morty_app/sreens/home_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -24,6 +26,10 @@ final GoRouter _router = GoRouter(
             final character = state.extra as Character;
             return CharacterScreen(character: character);
           },
+        ),
+        GoRoute(
+          path: 'favorites',
+          builder: (context, state) => const FavoriteScreen(),
         ),
       ],
     ),

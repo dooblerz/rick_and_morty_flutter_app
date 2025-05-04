@@ -21,6 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     final apiProvider = Provider.of<ApiProvider>(context, listen: false);
     apiProvider.getCharacters(page);
+    apiProvider.loadFavoritesFromCache();
     scrollController.addListener(() async {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {
@@ -52,6 +53,12 @@ class _HomeScreenState extends State<HomeScreen> {
               showSearch(context: context, delegate: SearchCharacter());
             },
             icon: Icon(Icons.search),
+          ),
+          IconButton(
+            onPressed: () {
+              context.go('/favorites');
+            },
+            icon: Icon(Icons.favorite),
           ),
         ],
       ),
@@ -106,19 +113,44 @@ class CharacterList extends StatelessWidget {
             },
             child: Card(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Hero(
-                    tag: character.id!,
-                    child: FadeInImage(
-                      placeholder: const AssetImage('assets/images/portal.gif'),
-                      image: NetworkImage(character.image!),
+                  Expanded(
+                    child: Hero(
+                      tag: character.id!,
+                      child: FadeInImage(
+                        placeholder: const AssetImage(
+                          'assets/images/portal.gif',
+                        ),
+                        image: NetworkImage(character.image!),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
-                  Text(
-                    character.name!,
-                    style: TextStyle(
-                      fontSize: 16,
-                      overflow: TextOverflow.ellipsis,
+                  SizedBox(
+                    height: 40,
+                    child: IconButton(
+                      onPressed: () => apiProvider.toggleFavorite(character),
+                      icon: Icon(
+                        apiProvider.isFavorite(character)
+                            ? Icons.favorite
+                            : Icons.favorite_border,
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4.0,
+                      vertical: 5.0,
+                    ),
+                    child: Text(
+                      character.name!,
+                      style: TextStyle(
+                        fontSize: 16,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ],
