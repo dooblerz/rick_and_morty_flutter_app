@@ -3,13 +3,19 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:rick_and_morty_app/models/character_mode.dart';
 import 'package:rick_and_morty_app/providers/api_provider.dart';
+import 'package:rick_and_morty_app/providers/theme_provider.dart';
 import 'package:rick_and_morty_app/sreens/character_screen.dart';
 import 'package:rick_and_morty_app/sreens/favorite_screen.dart';
 import 'package:rick_and_morty_app/sreens/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => ThemeProvider(),
+      child: MyApp(),
+    ),
+  );
 }
 
 final GoRouter _router = GoRouter(
@@ -41,12 +47,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return ChangeNotifierProvider(
       create: (context) => ApiProvider(),
       child: MaterialApp.router(
         title: 'Rick and Morty App',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(brightness: Brightness.dark, useMaterial3: true),
+        theme: themeProvider.currentTheme,
         routerConfig: _router,
       ),
     );
